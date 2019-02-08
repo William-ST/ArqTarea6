@@ -15,6 +15,7 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import audiolibros.example.com.audiolibros.AdaptadorLibros;
+import audiolibros.example.com.audiolibros.AdaptadorLibrosFiltro;
 import audiolibros.example.com.audiolibros.Aplicacion;
 import audiolibros.example.com.audiolibros.Libro;
 import audiolibros.example.com.audiolibros.MainActivity;
@@ -28,7 +29,7 @@ public class SelectorFragment extends Fragment {
 
     private Activity actividad;
     private RecyclerView recyclerView;
-    private AdaptadorLibros adaptador;
+    private AdaptadorLibrosFiltro adaptador;
     private Aplicacion app;
 
     @Override
@@ -50,8 +51,8 @@ public class SelectorFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 ((MainActivity) actividad).mostrarDetalle(
-                        recyclerView.getChildAdapterPosition(v));
-
+                        // recyclerView.getChildAdapterPosition(v));
+                        (int) adaptador.getItemId(recyclerView.getChildAdapterPosition(v)));
             }
         });
 
@@ -78,14 +79,17 @@ public class SelectorFragment extends Fragment {
                                         .setAction("SI", new View.OnClickListener() {
                                             @Override
                                             public void onClick(View view) {
-                                                app.getListaLibros().remove(id);
+                                                //app.getListaLibros().remove(id);
+                                                adaptador.borrar(id);
                                                 adaptador.notifyDataSetChanged();
                                             }
                                         })
                                         .show();
                                 break;
                             case 2: //Insertar
-                                app.getListaLibros().add(app.getListaLibros().get(id));
+                                //app.getListaLibros().add(app.getListaLibros().get(id));
+                                int posicion = recyclerView.getChildLayoutPosition(v);
+                                adaptador.insertar((Libro) adaptador.getItem(posicion));
                                 adaptador.notifyDataSetChanged();
                                 Snackbar.make(v, "Libro insertado", Snackbar.LENGTH_INDEFINITE).setAction("OK", new View.OnClickListener() {
                                     @Override
