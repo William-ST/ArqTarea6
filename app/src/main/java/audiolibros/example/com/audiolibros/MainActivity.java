@@ -146,7 +146,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
-        
+
         return true;
     }
 
@@ -204,5 +204,17 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         SharedPreferences.Editor editor = pref.edit();
         editor.putInt("ultimo", id);
         editor.commit();
+    }
+
+    public void mostrarElementos(boolean mostrar) {
+        appBarLayout.setExpanded(mostrar);
+        toggle.setDrawerIndicatorEnabled(mostrar);
+        if (mostrar) {
+            drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
+            tabs.setVisibility(View.VISIBLE);
+        } else {
+            tabs.setVisibility(View.GONE);
+            drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+        }
     }
 }

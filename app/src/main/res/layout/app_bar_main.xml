@@ -9,35 +9,44 @@
     <android.support.design.widget.AppBarLayout
         android:id="@+id/appBarLayout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="170dp"
         android:theme="@style/AppTheme.AppBarOverlay">
-<!--
+        <!--
+                <android.support.design.widget.CollapsingToolbarLayout
+                    android:id="@+id/collapsing"
+                    android:layout_width="match_parent"
+                    android:layout_height="100dp"
+                    app:expandedTitleMarginBottom="?attr/actionBarSize"
+                    app:layout_scrollFlags="scroll|exitUntilCollapsed">
+        -->
         <android.support.design.widget.CollapsingToolbarLayout
             android:id="@+id/collapsing"
             android:layout_width="match_parent"
-            android:layout_height="100dp"
-            app:expandedTitleMarginBottom="?attr/actionBarSize"
+            android:layout_height="match_parent"
             app:layout_scrollFlags="scroll|exitUntilCollapsed">
--->
+
             <android.support.v7.widget.Toolbar
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
                 android:background="?attr/colorPrimary"
-                app:popupTheme="@style/AppTheme.PopupOverlay"
-                app:layout_scrollFlags="scroll|enterAlways" />
+                app:layout_collapseMode="pin"
+                app:popupTheme="@style/AppTheme.PopupOverlay" />
 
             <android.support.design.widget.TabLayout
                 android:id="@+id/tabs"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
                 android:layout_gravity="bottom"
+                android:visibility="gone"
                 app:layout_anchor="@id/appBarLayout"
                 app:layout_anchorGravity="bottom"
                 app:tabMode="scrollable" />
-<!--
+
         </android.support.design.widget.CollapsingToolbarLayout>
--->
+        <!--
+                </android.support.design.widget.CollapsingToolbarLayout>
+        -->
     </android.support.design.widget.AppBarLayout>
 
     <include layout="@layout/content_main" />
@@ -46,8 +55,9 @@
         android:id="@+id/fab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
         android:layout_margin="@dimen/fab_margin"
-        android:src="@drawable/ic_last_visit" />
+        android:src="@drawable/ic_last_visit"
+        app:layout_anchor="@id/appBarLayout"
+        app:layout_anchorGravity="bottom|right|end" />
 
 </android.support.design.widget.CoordinatorLayout>
