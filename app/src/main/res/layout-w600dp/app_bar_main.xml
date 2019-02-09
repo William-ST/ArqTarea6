@@ -7,6 +7,7 @@
     tools:context="audiolibros.example.com.audiolibros.MainActivity">
 
     <android.support.design.widget.AppBarLayout
+        android:id="@+id/appBarLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:theme="@style/AppTheme.AppBarOverlay">
@@ -33,6 +34,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_margin="@dimen/fab_margin"
-        android:src="@drawable/ic_last_visit" />
+        app:srcCompat="@drawable/estrella" />
+    <!--android:src="@drawable/ic_last_visit"-->
 
 </android.support.design.widget.CoordinatorLayout>

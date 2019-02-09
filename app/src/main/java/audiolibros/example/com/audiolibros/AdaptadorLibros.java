@@ -1,12 +1,17 @@
 package audiolibros.example.com.audiolibros;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.support.v7.graphics.Palette;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.ImageLoader;
 
 import java.util.List;
 
@@ -51,10 +56,56 @@ public class AdaptadorLibros extends RecyclerView.Adapter<AdaptadorLibros.ViewHo
 
     // Usando como base el ViewHolder y lo personalizamos
     @Override
-    public void onBindViewHolder(ViewHolder holder, int posicion) {
-        Libro libro = listaLibros.get(posicion);
-        holder.portada.setImageResource(libro.recursoImagen);
+    public void onBindViewHolder(final ViewHolder holder, int posicion) {
+        final Libro libro = listaLibros.get(posicion);
+        //holder.portada.setImageResource(libro.recursoImagen);
+        Aplicacion aplicacion = (Aplicacion) contexto.getApplicationContext();
+        aplicacion.getLectorImagenes().get(libro.urlImagen,
+                new ImageLoader.ImageListener() {
+                    @Override
+                    public void onResponse(ImageLoader.ImageContainer
+                                                   response, boolean isImmediate) {
+                        /*
+                        Bitmap bitmap = response.getBitmap();
+                        holder.portada.setImageBitmap(bitmap);
+                        */
+                        Bitmap bitmap = response.getBitmap();
+                        if (bitmap != null) {
+                            holder.portada.setImageBitmap(bitmap);
+                            //Palette palette = Palette.from(bitmap).generate();
+                            //holder.itemView.setBackgroundColor(palette.getLightMutedColor(0));
+                            //holder.titulo.setBackgroundColor(palette.getLightVibrantColor(0));
+                            //holder.portada.invalidate();
+
+
+                            if (libro.colorVibrante != -1 && libro.colorApagado != -1) {
+                                holder.itemView.setBackgroundColor(libro.colorApagado);
+                                holder.titulo.setBackgroundColor(libro.colorVibrante);
+                                holder.portada.invalidate();
+                            } else {
+                                Palette.from(bitmap).generate(new Palette.PaletteAsyncListener() {
+                                    public void onGenerated(Palette palette) {
+                                        libro.colorVibrante = palette.getLightVibrantColor(0);
+                                        libro.colorApagado = palette.getLightMutedColor(0);
+
+                                        holder.itemView.setBackgroundColor(libro.colorApagado);
+                                        holder.titulo.setBackgroundColor(libro.colorVibrante);
+                                        holder.portada.invalidate();
+                                    }
+                                });
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        holder.portada.setImageResource(R.drawable.books);
+                    }
+                });
+
         holder.titulo.setText(libro.titulo);
+        holder.itemView.setScaleX(1);
+        holder.itemView.setScaleY(1);
     }
 
     // Indicamos el número de elementos de la lista
