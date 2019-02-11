@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.v4.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/fragment_detalle"
     android:layout_width="match_parent"
@@ -44,6 +45,33 @@
             android:layout_below="@id/autor"
             android:layout_centerHorizontal="true"
             android:scaleType="fitCenter" />
+
+        <LinearLayout
+            android:layout_below="@id/portada"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <audiolibros.example.com.audiolibros.ZoomSeekBar
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="20dp"
+                app:altoBar="40dp"
+                app:altoGuia="4dp"
+                app:altoNumeros="15dp"
+                app:altoPalanca="40dp"
+                app:altoRegla="10dp"
+                app:altoTexto="12dp"
+                app:anchoPalanca="10dp"
+                app:colorGuia="#FF9050"
+                app:colorPalanca="#FF0000"
+                app:colorRegla="#B0B070"
+                app:colorTexto="#00A0A0"
+                app:val="120"
+                app:escalaMin="100"
+                app:escalaMax="200"/>
+
+        </LinearLayout>
 
     </RelativeLayout>
 
