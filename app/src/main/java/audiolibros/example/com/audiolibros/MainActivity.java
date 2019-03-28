@@ -10,13 +10,11 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.GravityCompat;
-import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.Menu;
@@ -36,6 +34,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private TabLayout tabs;
     private DrawerLayout drawer;
     private ActionBarDrawerToggle toggle;
+    private LibroStorage libroStorage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,6 +42,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         setContentView(R.layout.activity_main);
 
         adaptador = ((Aplicacion) getApplicationContext()).getAdaptador();
+        libroStorage = LibroSharedPreferenceStorage.getInstance(this);
 
         appBarLayout = (AppBarLayout) findViewById(R.id.appBarLayout);
 
@@ -178,13 +178,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             Intent i = new Intent(this, PreferenciasActivity.class);
             startActivity(i);
             return true;
-            /*
-        } else if (id == R.id.menu_ultimo) {
-            irUltimoVisitado();
-            return true;
-        } else if (id == R.id.menu_buscar) {
-            return true;
-            */
         } else if (id == R.id.menu_acerca) {
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setMessage("Mensaje de Acerca De");
@@ -196,13 +189,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     public void irUltimoVisitado() {
-        SharedPreferences pref = getSharedPreferences(
-                "com.example.audiolibros_internal", MODE_PRIVATE);
-        int id = pref.getInt("ultimo", -1);
-        if (id >= 0) {
-            mostrarDetalle(id);
+        if (libroStorage.hasLastBook()) {
+            mostrarDetalle(libroStorage.getLastBook());
         } else {
-            Toast.makeText(this, "Sin última vista", Toast.LENGTH_LONG).show();
+            Toast.makeText(this,"Sin última vista",Toast.LENGTH_LONG).show();
         }
     }
 

@@ -15,6 +15,11 @@ import com.android.volley.toolbox.ImageLoader;
 
 import java.util.List;
 
+import audiolibros.example.com.audiolibros.command.ClickAction;
+import audiolibros.example.com.audiolibros.command.EmptyClickAction;
+import audiolibros.example.com.audiolibros.command.EmptyLongClickAction;
+import audiolibros.example.com.audiolibros.command.LongClickAction;
+
 /**
  * Created by William_ST on 03/02/19.
  */
@@ -24,8 +29,17 @@ public class AdaptadorLibros extends RecyclerView.Adapter<AdaptadorLibros.ViewHo
     private LayoutInflater inflador; //Crea Layouts a partir del XML
     protected List<Libro> listaLibros; //Lista de libros a visualizar
     private Context contexto;
-    private View.OnClickListener onClickListener;
-    private View.OnLongClickListener onLongClickListener;
+
+    private ClickAction clickAction = new EmptyClickAction();
+    private LongClickAction longClickAction = new EmptyLongClickAction();
+
+    public void setClickAction(ClickAction clickAction) {
+        this.clickAction = clickAction;
+    }
+
+    public void setLongClickAction(LongClickAction longClickAction) {
+        this.longClickAction = longClickAction;
+    }
 
     public AdaptadorLibros(Context contexto, List<Libro> listaLibros) {
         inflador = (LayoutInflater) contexto.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -49,14 +63,12 @@ public class AdaptadorLibros extends RecyclerView.Adapter<AdaptadorLibros.ViewHo
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) { // Inflamos la vista desde el xml
         View v = inflador.inflate(R.layout.elemento_selector, null);
-        v.setOnClickListener(onClickListener);
-        v.setOnLongClickListener(onLongClickListener);
         return new ViewHolder(v);
     }
 
     // Usando como base el ViewHolder y lo personalizamos
     @Override
-    public void onBindViewHolder(final ViewHolder holder, int posicion) {
+    public void onBindViewHolder(final ViewHolder holder, final int posicion) {
         final Libro libro = listaLibros.get(posicion);
         //holder.portada.setImageResource(libro.recursoImagen);
         Aplicacion aplicacion = (Aplicacion) contexto.getApplicationContext();
@@ -65,18 +77,9 @@ public class AdaptadorLibros extends RecyclerView.Adapter<AdaptadorLibros.ViewHo
                     @Override
                     public void onResponse(ImageLoader.ImageContainer
                                                    response, boolean isImmediate) {
-                        /*
-                        Bitmap bitmap = response.getBitmap();
-                        holder.portada.setImageBitmap(bitmap);
-                        */
                         Bitmap bitmap = response.getBitmap();
                         if (bitmap != null) {
                             holder.portada.setImageBitmap(bitmap);
-                            //Palette palette = Palette.from(bitmap).generate();
-                            //holder.itemView.setBackgroundColor(palette.getLightMutedColor(0));
-                            //holder.titulo.setBackgroundColor(palette.getLightVibrantColor(0));
-                            //holder.portada.invalidate();
-
 
                             if (libro.colorVibrante != -1 && libro.colorApagado != -1) {
                                 holder.itemView.setBackgroundColor(libro.colorApagado);
@@ -106,20 +109,25 @@ public class AdaptadorLibros extends RecyclerView.Adapter<AdaptadorLibros.ViewHo
         holder.titulo.setText(libro.titulo);
         holder.itemView.setScaleX(1);
         holder.itemView.setScaleY(1);
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                clickAction.execute(posicion);
+            }
+        });
+        holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                longClickAction.execute(v);
+                return true;
+            }
+        });
     }
 
     // Indicamos el número de elementos de la lista
     @Override
     public int getItemCount() {
         return listaLibros.size();
-    }
-
-    public void setOnItemClickListener(View.OnClickListener onClickListener) {
-        this.onClickListener = onClickListener;
-    }
-
-    public void setOnItemLongClickListener(View.OnLongClickListener onLongClickListener) {
-        this.onLongClickListener = onLongClickListener;
     }
 
 }

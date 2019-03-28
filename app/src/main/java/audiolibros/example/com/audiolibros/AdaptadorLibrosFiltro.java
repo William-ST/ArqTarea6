@@ -10,12 +10,14 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Observable;
+import java.util.Observer;
 
 /**
  * Created by William_ST on 08/02/19.
  */
 
-public class AdaptadorLibrosFiltro extends AdaptadorLibros {
+public class AdaptadorLibrosFiltro extends AdaptadorLibros implements Observer {
 
     private List<Libro> listaSinFiltro;
     private List<Integer> indiceFiltro;
@@ -52,7 +54,9 @@ public class AdaptadorLibrosFiltro extends AdaptadorLibros {
 
     public void recalculaFiltro() {
         listaLibros = new ArrayList<Libro>();
+        listaLibros.clear();
         indiceFiltro = new ArrayList<Integer>();
+        indiceFiltro.clear();
         for (int i = 0; i < listaSinFiltro.size(); i++) {
             Libro libro = listaSinFiltro.get(i);
             if ((libro.titulo.toLowerCase().contains(busqueda) ||
@@ -83,6 +87,9 @@ public class AdaptadorLibrosFiltro extends AdaptadorLibros {
         recalculaFiltro();
     }
 
-
+    @Override
+    public void update(Observable observable, Object data) { setBusqueda((String) data);
+        notifyDataSetChanged();
+    }
 
 }

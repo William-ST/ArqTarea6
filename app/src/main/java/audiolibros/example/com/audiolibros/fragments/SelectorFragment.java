@@ -30,6 +30,9 @@ import audiolibros.example.com.audiolibros.Aplicacion;
 import audiolibros.example.com.audiolibros.Libro;
 import audiolibros.example.com.audiolibros.MainActivity;
 import audiolibros.example.com.audiolibros.R;
+import audiolibros.example.com.audiolibros.SearchObservable;
+import audiolibros.example.com.audiolibros.command.OpenDetailClickAction;
+import audiolibros.example.com.audiolibros.command.OpenMenuLongClickAction;
 
 /**
  * Created by William_ST on 05/02/19.
@@ -69,139 +72,96 @@ public class SelectorFragment extends Fragment implements Animator.AnimatorListe
 
         setHasOptionsMenu(true);
 
-        adaptador.setOnItemClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ((MainActivity) actividad).mostrarDetalle(
-                        // recyclerView.getChildAdapterPosition(v));
-                        (int) adaptador.getItemId(recyclerView.getChildAdapterPosition(v)));
-            }
-        });
-
-        adaptador.setOnItemLongClickListener(new View.OnLongClickListener() {
-            public boolean onLongClick(final View v) {
-                if (app == null) return false;
-
-                final int id = recyclerView.getChildAdapterPosition(v);
-                AlertDialog.Builder menu = new AlertDialog.Builder(actividad);
-                CharSequence[] opciones = {"Compartir", "Borrar ", "Insertar"};
-                menu.setItems(opciones, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int opcion) {
-                        switch (opcion) {
-                            case 0: //Compartir
-                                Animator anim = AnimatorInflater.loadAnimator(actividad, R.animator.share);
-                                anim.addListener(new Animator.AnimatorListener() {
-                                    @Override
-                                    public void onAnimationStart(Animator animation) {
-
-                                    }
-
-                                    @Override
-                                    public void onAnimationEnd(Animator animation) {
-                                        Libro libro = app.getListaLibros().get(id);
-                                        Intent i = new Intent(Intent.ACTION_SEND);
-                                        i.setType("text/plain");
-                                        i.putExtra(Intent.EXTRA_SUBJECT, libro.titulo);
-                                        i.putExtra(Intent.EXTRA_TEXT, libro.urlAudio);
-                                        startActivity(Intent.createChooser(i, "Compartir"));
-                                    }
-
-                                    @Override
-                                    public void onAnimationCancel(Animator animation) {
-
-                                    }
-
-                                    @Override
-                                    public void onAnimationRepeat(Animator animation) {
-
-                                    }
-                                });
-                                anim.setTarget(v);
-                                anim.start();
-                                break;
-                            case 1: //Borrar
-                                Snackbar.make(v, "¿Estás seguro?", Snackbar.LENGTH_LONG)
-                                        .setAction("SI", new View.OnClickListener() {
-                                            @Override
-                                            public void onClick(View view) {
-                                                //app.getListaLibros().remove(id);
-
-                                                //adaptador.borrar(id);
-                                                //adaptador.notifyDataSetChanged();
-
-                                                //Animation anim = AnimationUtils.loadAnimation(actividad, R.anim.menguar);
-                                                //anim.setAnimationListener(SelectorFragment.this);
-                                                //v.startAnimation(anim);
-
-                                                Animator anim = AnimatorInflater.loadAnimator(actividad, R.animator.menguar);
-                                                anim.addListener(SelectorFragment.this);
-                                                anim.setTarget(v);
-                                                anim.start();
-
-                                                adaptador.borrar(id);
-                                            }
-                                        })
-                                        .show();
-                                break;
-                            case 2: //Insertar
-                                //app.getListaLibros().add(app.getListaLibros().get(id));
-                                int posicion = recyclerView.getChildLayoutPosition(v);
-                                adaptador.insertar((Libro) adaptador.getItem(posicion));
-                                //adaptador.notifyDataSetChanged();
-                                adaptador.notifyItemInserted(0);
-                                Snackbar.make(v, "Libro insertado", Snackbar.LENGTH_INDEFINITE).setAction("OK", new View.OnClickListener() {
-                                    @Override
-                                    public void onClick(View view) {
-
-                                    }
-                                }).show();
-                                break;
-                        }
-                    }
-                });
-                menu.create().show();
-                return true;
-            }
-        });
+        adaptador.setClickAction(new OpenDetailClickAction(((MainActivity)getActivity())));
+        adaptador.setLongClickAction(new OpenMenuLongClickAction(this));
 
         return vista;
     }
 
-    /*
-        @Override
-        public void onAnimationStart(Animation animation) {
+    public void showMenuItemOptions(final View v) {
+        if (app == null) return;
 
-        }
+        final int id = recyclerView.getChildAdapterPosition(v);
+        AlertDialog.Builder menu = new AlertDialog.Builder(actividad);
+        CharSequence[] opciones = {"Compartir", "Borrar ", "Insertar"};
+        menu.setItems(opciones, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int opcion) {
+                switch (opcion) {
+                    case 0: //Compartir
+                        Animator anim = AnimatorInflater.loadAnimator(actividad, R.animator.share);
+                        anim.addListener(new Animator.AnimatorListener() {
+                            @Override
+                            public void onAnimationStart(Animator animation) {
 
-        @Override
-        public void onAnimationEnd(Animation animation) {
-            adaptador.notifyDataSetChanged();
-        }
+                            }
 
-        @Override
-        public void onAnimationRepeat(Animation animation) {
+                            @Override
+                            public void onAnimationEnd(Animator animation) {
+                                Libro libro = app.getLibroById(id);
+                                if (libro != Libro.LIBRO_EMPTY) {
+                                    Intent i = new Intent(Intent.ACTION_SEND);
+                                    i.setType("text/plain");
+                                    i.putExtra(Intent.EXTRA_SUBJECT, libro.titulo);
+                                    i.putExtra(Intent.EXTRA_TEXT, libro.urlAudio);
+                                    startActivity(Intent.createChooser(i, "Compartir"));
+                                }
+                            }
 
-        }
-    */
+                            @Override
+                            public void onAnimationCancel(Animator animation) {
+
+                            }
+
+                            @Override
+                            public void onAnimationRepeat(Animator animation) {
+
+                            }
+                        });
+                        anim.setTarget(v);
+                        anim.start();
+                        break;
+                    case 1: //Borrar
+                        Snackbar.make(v, "¿Estás seguro?", Snackbar.LENGTH_LONG)
+                                .setAction("SI", new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View view) {
+                                        Animator anim = AnimatorInflater.loadAnimator(actividad, R.animator.menguar);
+                                        anim.addListener(SelectorFragment.this);
+                                        anim.setTarget(v);
+                                        anim.start();
+
+                                        adaptador.borrar(id);
+                                    }
+                                })
+                                .show();
+                        break;
+                    case 2: //Insertar
+                        int posicion = recyclerView.getChildLayoutPosition(v);
+                        adaptador.insertar((Libro) adaptador.getItem(posicion));
+                        adaptador.notifyItemInserted(0);
+                        Snackbar.make(v, "Libro insertado", Snackbar.LENGTH_INDEFINITE).setAction("OK", new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+
+                            }
+                        }).show();
+                        break;
+                }
+            }
+        });
+        menu.create().show();
+    }
+
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.menu_selector, menu);
         MenuItem searchItem = menu.findItem(R.id.menu_buscar);
         SearchView searchView = (SearchView) searchItem.getActionView();
-        searchView.setOnQueryTextListener(
-                new SearchView.OnQueryTextListener() {
-                    @Override
-                    public boolean onQueryTextChange(String query) {
-                        adaptador.setBusqueda(query);
-                        adaptador.notifyDataSetChanged();
-                        return false;
-                    }
 
-                    @Override
-                    public boolean onQueryTextSubmit(String query) {
-                        return false;
-                    }
-                });
+        SearchObservable searchObservable = new SearchObservable();
+        searchObservable.addObserver(adaptador);
+        searchView.setOnQueryTextListener(searchObservable);
+
         MenuItemCompat.setOnActionExpandListener(searchItem, new MenuItemCompat.OnActionExpandListener() {
             @Override
             public boolean onMenuItemActionCollapse(MenuItem item) {

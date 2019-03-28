@@ -61,27 +61,28 @@ public class DetalleFragment extends Fragment implements View.OnTouchListener, M
         if (((Aplicacion) getActivity().getApplication())
                 .getListaLibros() == null) return;
 
-        Libro libro = ((Aplicacion) getActivity().getApplication())
-                .getListaLibros().get(id);
-        ((TextView) vista.findViewById(R.id.titulo)).setText(libro.titulo);
-        ((TextView) vista.findViewById(R.id.autor)).setText(libro.autor);
+        Libro libro = ((Aplicacion) getActivity().getApplication()).getLibroById(id);
+        if (libro != Libro.LIBRO_EMPTY) {
+            ((TextView) vista.findViewById(R.id.titulo)).setText(libro.titulo);
+            ((TextView) vista.findViewById(R.id.autor)).setText(libro.autor);
 
-        Aplicacion aplicacion = (Aplicacion) getActivity().getApplication();
-        ((NetworkImageView) vista.findViewById(R.id.portada)).setImageUrl(libro.urlImagen, aplicacion.getLectorImagenes());
+            Aplicacion aplicacion = (Aplicacion) getActivity().getApplication();
+            ((NetworkImageView) vista.findViewById(R.id.portada)).setImageUrl(libro.urlImagen, aplicacion.getLectorImagenes());
 
-        vista.setOnTouchListener(this);
-        if (mediaPlayer != null) {
-            mediaPlayer.release();
-        }
-        mediaPlayer = new MediaPlayer();
-        mediaPlayer.setOnPreparedListener(this);
-        mediaController = new MediaController(getActivity());
-        Uri audio = Uri.parse(libro.urlAudio);
-        try {
-            mediaPlayer.setDataSource(getActivity(), audio);
-            mediaPlayer.prepareAsync();
-        } catch (IOException e) {
-            Log.e("Audiolibros", "ERROR: No se puede reproducir " + audio, e);
+            vista.setOnTouchListener(this);
+            if (mediaPlayer != null) {
+                mediaPlayer.release();
+            }
+            mediaPlayer = new MediaPlayer();
+            mediaPlayer.setOnPreparedListener(this);
+            mediaController = new MediaController(getActivity());
+            Uri audio = Uri.parse(libro.urlAudio);
+            try {
+                mediaPlayer.setDataSource(getActivity(), audio);
+                mediaPlayer.prepareAsync();
+            } catch (IOException e) {
+                Log.e("Audiolibros", "ERROR: No se puede reproducir " + audio, e);
+            }
         }
     }
 

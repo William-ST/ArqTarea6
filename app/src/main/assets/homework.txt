@@ -1,0 +1,17 @@
+(X) Ejercicio: Encapsular código para guardar último libro leído
+(X) Ejercicio: Uso del patrón Observer
+(X) Práctica: Uso del patrón Null Object en la clase Libro
+(X) Ejercicio: Uso del patrón Command
+(X) Práctica: Uso del patrón Command con LongClickListener
+(X) Ejercicio: Uso del patrón Adapter
+(X) Ejercicio: Aplicar patrón builder en la clase Libro
+(X) Práctica: Uso del patrón builder en la clase Libro
+(X) Ejercicio: Acceso a último libro leído con el patrón Singleton
+(_) Práctica: Acceso a los libros con el patrón Singleton
+(_) Práctica: Acceso a Volley con el patrón Singleton
+(_) Ejercicio: Uso de Model View Controller
+(_) Ejercicio: Uso de Model View Presenter
+(_) Práctica: Uso de MVP en DetalleFragment*
+(_) Ejercicio: Uso de Casos de uso
+(_) Ejercicio: Uso de Repositorio para abstraer
+(_) Práctica: Uso de la arquitectura CLEAN en DetalleFragment*

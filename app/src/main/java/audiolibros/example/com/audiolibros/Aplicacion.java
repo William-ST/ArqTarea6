@@ -18,8 +18,8 @@ public class Aplicacion extends Application {
 
     private List<Libro> listaLibros;
     private AdaptadorLibrosFiltro adaptador;
-    private static RequestQueue colaPeticiones;
-    private static ImageLoader lectorImagenes;
+    private RequestQueue colaPeticiones;
+    private ImageLoader lectorImagenes;
 
     @Override
     public void onCreate() {
@@ -50,11 +50,15 @@ public class Aplicacion extends Application {
         return listaLibros;
     }
 
-    public static RequestQueue getColaPeticiones() {
-        return colaPeticiones;
+    public Libro getLibroById(int id) {
+        Libro libro = Libro.LIBRO_EMPTY;
+        if (getListaLibros() != null && getListaLibros().size() > id) {
+            libro = getListaLibros().get(id);
+        }
+        return libro;
     }
 
-    public static ImageLoader getLectorImagenes() {
+    public ImageLoader getLectorImagenes() {
         return lectorImagenes;
     }
 
