@@ -28,6 +28,7 @@ import audiolibros.example.com.audiolibros.AdaptadorLibros;
 import audiolibros.example.com.audiolibros.AdaptadorLibrosFiltro;
 import audiolibros.example.com.audiolibros.Aplicacion;
 import audiolibros.example.com.audiolibros.Libro;
+import audiolibros.example.com.audiolibros.LibrosSingleton;
 import audiolibros.example.com.audiolibros.MainActivity;
 import audiolibros.example.com.audiolibros.R;
 import audiolibros.example.com.audiolibros.SearchObservable;
@@ -43,14 +44,12 @@ public class SelectorFragment extends Fragment implements Animator.AnimatorListe
     private Activity actividad;
     private RecyclerView recyclerView;
     private AdaptadorLibrosFiltro adaptador;
-    private Aplicacion app;
 
     @Override
     public void onAttach(Activity actividad) {
         super.onAttach(actividad);
         this.actividad = actividad;
-        app = (Aplicacion) actividad.getApplication();
-        adaptador = app.getAdaptador();
+        adaptador = LibrosSingleton.getInstance(getContext()).getAdaptador();
     }
 
     @Override
@@ -79,8 +78,6 @@ public class SelectorFragment extends Fragment implements Animator.AnimatorListe
     }
 
     public void showMenuItemOptions(final View v) {
-        if (app == null) return;
-
         final int id = recyclerView.getChildAdapterPosition(v);
         AlertDialog.Builder menu = new AlertDialog.Builder(actividad);
         CharSequence[] opciones = {"Compartir", "Borrar ", "Insertar"};
@@ -97,7 +94,7 @@ public class SelectorFragment extends Fragment implements Animator.AnimatorListe
 
                             @Override
                             public void onAnimationEnd(Animator animation) {
-                                Libro libro = app.getLibroById(id);
+                                Libro libro = LibrosSingleton.getInstance(getContext()).getLibroById(id);
                                 if (libro != Libro.LIBRO_EMPTY) {
                                     Intent i = new Intent(Intent.ACTION_SEND);
                                     i.setType("text/plain");

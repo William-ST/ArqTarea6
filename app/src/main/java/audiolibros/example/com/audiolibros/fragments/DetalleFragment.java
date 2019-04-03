@@ -19,8 +19,10 @@ import java.io.IOException;
 
 import audiolibros.example.com.audiolibros.Aplicacion;
 import audiolibros.example.com.audiolibros.Libro;
+import audiolibros.example.com.audiolibros.LibrosSingleton;
 import audiolibros.example.com.audiolibros.MainActivity;
 import audiolibros.example.com.audiolibros.R;
+import audiolibros.example.com.audiolibros.VolleySingleton;
 
 /**
  * Created by William_ST on 05/02/19.
@@ -58,16 +60,12 @@ public class DetalleFragment extends Fragment implements View.OnTouchListener, M
 
 
     private void ponInfoLibro(int id, View vista) {
-        if (((Aplicacion) getActivity().getApplication())
-                .getListaLibros() == null) return;
-
-        Libro libro = ((Aplicacion) getActivity().getApplication()).getLibroById(id);
+        Libro libro = LibrosSingleton.getInstance(getActivity().getBaseContext()).getLibroById(id);
         if (libro != Libro.LIBRO_EMPTY) {
             ((TextView) vista.findViewById(R.id.titulo)).setText(libro.titulo);
             ((TextView) vista.findViewById(R.id.autor)).setText(libro.autor);
 
-            Aplicacion aplicacion = (Aplicacion) getActivity().getApplication();
-            ((NetworkImageView) vista.findViewById(R.id.portada)).setImageUrl(libro.urlImagen, aplicacion.getLectorImagenes());
+            ((NetworkImageView) vista.findViewById(R.id.portada)).setImageUrl(libro.urlImagen, VolleySingleton.getInstance(getActivity()).getLectorImagenes());
 
             vista.setOnTouchListener(this);
             if (mediaPlayer != null) {

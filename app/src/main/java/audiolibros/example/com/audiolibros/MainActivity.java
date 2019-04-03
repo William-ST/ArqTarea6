@@ -24,6 +24,9 @@ import android.widget.Toast;
 import audiolibros.example.com.audiolibros.fragments.DetalleFragment;
 import audiolibros.example.com.audiolibros.fragments.SelectorFragment;
 
+import static audiolibros.example.com.audiolibros.LibroSharedPreferenceStorage.KEY_ULTIMO_LIBRO;
+import static audiolibros.example.com.audiolibros.LibroSharedPreferenceStorage.PREF_AUDIOLIBROS;
+
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     private RecyclerView recyclerView;
@@ -41,7 +44,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        adaptador = ((Aplicacion) getApplicationContext()).getAdaptador();
+        adaptador = LibrosSingleton.getInstance(this).getAdaptador();
         libroStorage = LibroSharedPreferenceStorage.getInstance(this);
 
         appBarLayout = (AppBarLayout) findViewById(R.id.appBarLayout);
@@ -211,10 +214,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             transaccion.commit();
         }
 
-        SharedPreferences pref = getSharedPreferences("com.example.audiolibros_internal", MODE_PRIVATE);
+        SharedPreferences pref = getSharedPreferences(PREF_AUDIOLIBROS, MODE_PRIVATE);
         SharedPreferences.Editor editor = pref.edit();
-        editor.putInt("ultimo", id);
-        editor.commit();
+        editor.putInt(KEY_ULTIMO_LIBRO  , id);
+        editor.apply();
     }
 
     public void mostrarElementos(boolean mostrar) {

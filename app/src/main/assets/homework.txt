@@ -7,8 +7,8 @@
 (X) Ejercicio: Aplicar patrón builder en la clase Libro
 (X) Práctica: Uso del patrón builder en la clase Libro
 (X) Ejercicio: Acceso a último libro leído con el patrón Singleton
-(_) Práctica: Acceso a los libros con el patrón Singleton
-(_) Práctica: Acceso a Volley con el patrón Singleton
+(X) Práctica: Acceso a los libros con el patrón Singleton
+(X) Práctica: Acceso a Volley con el patrón Singleton
 (_) Ejercicio: Uso de Model View Controller
 (_) Ejercicio: Uso de Model View Presenter
 (_) Práctica: Uso de MVP en DetalleFragment*
