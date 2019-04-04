@@ -3,7 +3,6 @@ package audiolibros.example.com.audiolibros;
 import android.app.AlertDialog;
 import android.app.FragmentTransaction;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.FloatingActionButton;
@@ -21,13 +20,11 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import audiolibros.example.com.audiolibros.controller.DELETE__MainController;
 import audiolibros.example.com.audiolibros.fragments.DetalleFragment;
 import audiolibros.example.com.audiolibros.fragments.SelectorFragment;
 
-import static audiolibros.example.com.audiolibros.LibroSharedPreferenceStorage.KEY_ULTIMO_LIBRO;
-import static audiolibros.example.com.audiolibros.LibroSharedPreferenceStorage.PREF_AUDIOLIBROS;
-
-public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+public class MainActivity extends AppCompatActivity implements MainPresenter.View, NavigationView.OnNavigationItemSelectedListener {
 
     private RecyclerView recyclerView;
     private RecyclerView.LayoutManager layoutManager;
@@ -37,7 +34,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private TabLayout tabs;
     private DrawerLayout drawer;
     private ActionBarDrawerToggle toggle;
-    private LibroStorage libroStorage;
+    //private DELETE__MainController controller;
+    private MainPresenter presenter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,7 +43,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         setContentView(R.layout.activity_main);
 
         adaptador = LibrosSingleton.getInstance(this).getAdaptador();
-        libroStorage = LibroSharedPreferenceStorage.getInstance(this);
+        //controller = new DELETE__MainController(LibroSharedPreferenceStorage.getInstance(this));
+        presenter = new MainPresenter(LibroSharedPreferenceStorage.getInstance(this), this);
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                presenter.clickFavoriteButton();
+            }
+        });
 
         appBarLayout = (AppBarLayout) findViewById(R.id.appBarLayout);
 
@@ -77,21 +83,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         NavigationView navigationView = (NavigationView) findViewById(
                 R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-        /*
-        Aplicacion app = (Aplicacion) getApplication();
-        recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
-        recyclerView.setAdapter(app.getAdaptador());
-        layoutManager = new GridLayoutManager(this, 2);//LinearLayoutManager.HORIZONTAL, false);
-        recyclerView.setLayoutManager(layoutManager);
-        */
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+
+        /*
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 irUltimoVisitado();
             }
         });
+        */
 
         tabs = (TabLayout) findViewById(R.id.tabs);
         tabs.addTab(tabs.newTab().setText("Todos"));
@@ -191,15 +192,36 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         return super.onOptionsItemSelected(item);
     }
 
+    /*
     public void irUltimoVisitado() {
-        if (libroStorage.hasLastBook()) {
-            mostrarDetalle(libroStorage.getLastBook());
+        if (controller.hasLastBook()) {
+            mostrarDetalle(controller.getLastBook());
         } else {
-            Toast.makeText(this,"Sin última vista",Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "Sin última vista", Toast.LENGTH_LONG).show();
         }
     }
 
     public void mostrarDetalle(int id) {
+        mostrarFragmentDetalle(id);
+        controller.saveLastBook(id);
+    }
+    */
+
+    public void irUltimoVisitado() {
+        presenter.clickFavoriteButton();
+    }
+
+    @Override
+    public void mostrarDetalle(int id) {
+        presenter.openDetalle(id);
+    }
+
+    @Override
+    public void mostrarNoUltimaVisita() {
+        Toast.makeText(this, "Sin última vista", Toast.LENGTH_LONG).show();
+    }
+
+    private void mostrarFragmentDetalle(int id) {
         DetalleFragment detalleFragment = (DetalleFragment) getFragmentManager().findFragmentById(R.id.detalle_fragment);
         if (detalleFragment != null) {
             detalleFragment.ponInfoLibro(id);
@@ -213,11 +235,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             transaccion.addToBackStack(null);
             transaccion.commit();
         }
-
-        SharedPreferences pref = getSharedPreferences(PREF_AUDIOLIBROS, MODE_PRIVATE);
-        SharedPreferences.Editor editor = pref.edit();
-        editor.putInt(KEY_ULTIMO_LIBRO  , id);
-        editor.apply();
     }
 
     public void mostrarElementos(boolean mostrar) {

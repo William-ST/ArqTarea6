@@ -31,12 +31,15 @@ public class LibroSharedPreferenceStorage implements LibroStorage {
         return context.getSharedPreferences(PREF_AUDIOLIBROS, Context.MODE_PRIVATE);
     }
 
-    private void setLibroOpenDetail(Libro libro) {
-
-    }
-
     @Override
     public int getLastBook() {
         return getPreference().getInt(KEY_ULTIMO_LIBRO, -1);
+    }
+
+    @Override
+    public void saveLastBook(int id) {
+        SharedPreferences.Editor editor = getPreference().edit();
+        editor.putInt(KEY_ULTIMO_LIBRO  , id);
+        editor.apply();
     }
 }

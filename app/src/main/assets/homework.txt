@@ -9,8 +9,8 @@
 (X) Ejercicio: Acceso a último libro leído con el patrón Singleton
 (X) Práctica: Acceso a los libros con el patrón Singleton
 (X) Práctica: Acceso a Volley con el patrón Singleton
-(_) Ejercicio: Uso de Model View Controller
-(_) Ejercicio: Uso de Model View Presenter
+(X) Ejercicio: Uso de Model View Controller
+(X) Ejercicio: Uso de Model View Presenter
 (_) Práctica: Uso de MVP en DetalleFragment*
 (_) Ejercicio: Uso de Casos de uso
 (_) Ejercicio: Uso de Repositorio para abstraer
