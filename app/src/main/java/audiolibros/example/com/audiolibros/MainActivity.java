@@ -20,9 +20,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
-import audiolibros.example.com.audiolibros.controller.DELETE__MainController;
 import audiolibros.example.com.audiolibros.fragments.DetalleFragment;
 import audiolibros.example.com.audiolibros.fragments.SelectorFragment;
+import audiolibros.example.com.audiolibros.presenter.MainPresenter;
 
 public class MainActivity extends AppCompatActivity implements MainPresenter.View, NavigationView.OnNavigationItemSelectedListener {
 
@@ -211,7 +211,6 @@ public class MainActivity extends AppCompatActivity implements MainPresenter.Vie
         presenter.clickFavoriteButton();
     }
 
-    @Override
     public void mostrarDetalle(int id) {
         presenter.openDetalle(id);
     }
@@ -221,7 +220,8 @@ public class MainActivity extends AppCompatActivity implements MainPresenter.Vie
         Toast.makeText(this, "Sin última vista", Toast.LENGTH_LONG).show();
     }
 
-    private void mostrarFragmentDetalle(int id) {
+    @Override
+    public void mostrarFragmentDetalle(int id) {
         DetalleFragment detalleFragment = (DetalleFragment) getFragmentManager().findFragmentById(R.id.detalle_fragment);
         if (detalleFragment != null) {
             detalleFragment.ponInfoLibro(id);
