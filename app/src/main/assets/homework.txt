@@ -11,7 +11,7 @@
 (X) Práctica: Acceso a Volley con el patrón Singleton
 (X) Ejercicio: Uso de Model View Controller
 (X) Ejercicio: Uso de Model View Presenter
-(_) Práctica: Uso de MVP en DetalleFragment*
+(X) Práctica: Uso de MVP en DetalleFragment*
 (X) Ejercicio: Uso de Casos de uso
 (X) Ejercicio: Uso de Repositorio para abstraer
-(_) Práctica: Uso de la arquitectura CLEAN en DetalleFragment*
+(X) Práctica: Uso de la arquitectura CLEAN en DetalleFragment*

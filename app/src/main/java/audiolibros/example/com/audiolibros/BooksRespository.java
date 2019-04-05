@@ -20,4 +20,8 @@ public class BooksRespository {
         return librosStorage.hasLastBook();
     }
 
+    public Libro getBookById(int id) {
+        return this.librosStorage.getBookById(id);
+    }
+
 }

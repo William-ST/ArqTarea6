@@ -42,4 +42,10 @@ public class LibroSharedPreferenceStorage implements LibroStorage {
         editor.putInt(KEY_ULTIMO_LIBRO  , id);
         editor.apply();
     }
+
+    @Override
+    public Libro getBookById(int id) {
+        // not implemting but not use
+        return null;
+    }
 }

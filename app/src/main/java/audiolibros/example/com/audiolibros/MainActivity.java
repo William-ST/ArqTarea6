@@ -94,16 +94,6 @@ public class MainActivity extends AppCompatActivity implements MainPresenter.Vie
                 R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-
-        /*
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                irUltimoVisitado();
-            }
-        });
-        */
-
         tabs = (TabLayout) findViewById(R.id.tabs);
         tabs.addTab(tabs.newTab().setText("Todos"));
         tabs.addTab(tabs.newTab().setText("Nuevos"));
@@ -202,21 +192,6 @@ public class MainActivity extends AppCompatActivity implements MainPresenter.Vie
         return super.onOptionsItemSelected(item);
     }
 
-    /*
-    public void irUltimoVisitado() {
-        if (controller.hasLastBook()) {
-            mostrarDetalle(controller.getLastBook());
-        } else {
-            Toast.makeText(this, "Sin última vista", Toast.LENGTH_LONG).show();
-        }
-    }
-
-    public void mostrarDetalle(int id) {
-        mostrarFragmentDetalle(id);
-        controller.saveLastBook(id);
-    }
-    */
-
     public void irUltimoVisitado() {
         presenter.clickFavoriteButton();
     }
@@ -234,7 +209,9 @@ public class MainActivity extends AppCompatActivity implements MainPresenter.Vie
     public void mostrarFragmentDetalle(int id) {
         DetalleFragment detalleFragment = (DetalleFragment) getFragmentManager().findFragmentById(R.id.detalle_fragment);
         if (detalleFragment != null) {
-            detalleFragment.ponInfoLibro(id);
+            if (detalleFragment.getPresenter() != null) {
+                detalleFragment.getPresenter().ponInfoLibro(id);
+            }
         } else {
             DetalleFragment nuevoFragment = new DetalleFragment();
             Bundle args = new Bundle();

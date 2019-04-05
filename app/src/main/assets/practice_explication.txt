@@ -1,0 +1,204 @@
+
+Práctica: Uso de MVP en DetalleFragment:
+----------------------------------------
+
+public class DetallePresenter {
+
+    private final DetalleView view;
+    private final GetBookById getBookById;
+
+    public DetallePresenter(DetalleView view, GetBookById getBookById) {
+        this.view = view;
+        this.getBookById = getBookById;
+    }
+
+    public void ponInfoLibro(int position) {
+        Libro book = getBookById.execute(position);
+        if (book != Libro.LIBRO_EMPTY) {
+            view.renderInfoLibro(book);
+            view.startAudio(Uri.parse(book.urlAudio));
+        }
+    }
+
+    public interface DetalleView {
+        void renderInfoLibro(Libro libro);
+        void startAudio(Uri audio);
+        void stopAudio();
+    }
+
+}
+
+public class DetalleFragment extends Fragment implements View.OnTouchListener, MediaPlayer.OnPreparedListener,
+        MediaController.MediaPlayerControl, DetallePresenter.DetalleView {
+
+    /*...*/
+    private DetallePresenter detallePresenter;
+
+    public DetallePresenter getPresenter() {
+        return detallePresenter;
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        GetBookById getBookById = new GetBookById(new BooksRespository(new LibroMemoryStorage(getActivity())));
+        detallePresenter = new DetallePresenter(this, getBookById);
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflador, ViewGroup contenedor, Bundle savedInstanceState) {
+        view = inflador.inflate(R.layout.fragment_detalle, contenedor, false);
+        Bundle args = getArguments();
+        int position = args.getInt(ARG_ID_LIBRO, 0);
+        detallePresenter.ponInfoLibro(position);
+        return view;
+    }
+
+    /*...*/
+
+    private void initializeGUI() {
+        tvTitle = view.findViewById(R.id.titulo);
+        tvAutor = view.findViewById(R.id.autor);
+        networkImageView = view.findViewById(R.id.portada);
+    }
+
+    @Override
+    public void renderInfoLibro(Libro libro) {
+        if (libro != Libro.LIBRO_EMPTY) {
+            initializeGUI();
+            tvTitle.setText(libro.titulo);
+            tvAutor.setText(libro.autor);
+            networkImageView.setImageUrl(libro.urlImagen, VolleySingleton.getInstance(getActivity()).getLectorImagenes());
+            view.setOnTouchListener(this);
+        }
+    }
+
+    @Override
+    public void startAudio(Uri uriAudio) {
+        if (uriAudio == null) return;
+
+        if (mediaPlayer != null) {
+            mediaPlayer.release();
+        }
+        mediaPlayer = new MediaPlayer();
+        mediaPlayer.setOnPreparedListener(this);
+        mediaController = new MediaController(getActivity());
+        try {
+            mediaPlayer.setDataSource(getActivity(), uriAudio);
+            mediaPlayer.prepareAsync();
+        } catch (IOException e) {
+            Log.e("Audiolibros", "ERROR: No se puede reproducir " + uriAudio.toString(), e);
+        }
+    }
+
+    @Override
+    public void stopAudio() {
+        mediaController.hide();
+        try {
+            mediaPlayer.stop();
+            mediaPlayer.release();
+        } catch (Exception e) {
+            Log.d("Audiolibros", "Error en mediaPlayer.stop()");
+        }
+    }
+
+    /*...*/
+}
+
+
+
+Práctica: Uso de la arquitectura CLEAN en DetalleFragment
+---------------------------------------------------------
+/***
+Caso de uso obtener libro por id
+***/
+public class GetBookById {
+
+    private final BooksRespository booksRespository;
+
+    public GetBookById(BooksRespository booksRespository) {
+        this.booksRespository = booksRespository;
+    }
+
+    public Libro execute(int id) {
+        return booksRespository.getBookById(id);
+    }
+
+}
+
+/***
+
+Nuevo Storage para almacenar a los libros definidos en memoria
+
+***/
+public class LibroMemoryStorage implements LibroStorage {
+
+    private Context context;
+
+    public LibroMemoryStorage(Context context) {
+        this.context = context;
+    }
+
+    @Override
+    public boolean hasLastBook() {
+        // not implemting but not use
+        return false;
+    }
+
+    @Override
+    public int getLastBook() {
+        // not implemting but not use
+        return 0;
+    }
+
+    @Override
+    public void saveLastBook(int id) {
+        // not implemting but not use
+    }
+
+    @Override
+    public Libro getBookById(int id) {
+        return LibrosSingleton.getInstance(context).getLibroById(id);
+    }
+
+}
+
+/***
+
+Se le agrega el método para obtener un libro por su id
+
+***/
+public class BooksRespository {
+
+    private final LibroStorage librosStorage;
+
+    public BooksRespository(LibroStorage librosStorage) {
+        this.librosStorage = librosStorage;
+    }
+
+    /*...*/
+
+    public Libro getBookById(int id) {
+        return this.librosStorage.getBookById(id);
+    }
+
+}
+
+/***
+
+Se inicializa el presenter y se setea el caso de uso el cual también es seteado con un nuevo storage (LibroMemoryStorage) usando el patrón repository defindo anteriormente
+
+***/
+public class DetalleFragment extends Fragment implements View.OnTouchListener, MediaPlayer.OnPreparedListener,
+        MediaController.MediaPlayerControl, DetallePresenter.DetalleView {
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        GetBookById getBookById = new GetBookById(new BooksRespository(new LibroMemoryStorage(getActivity())));
+        detallePresenter = new DetallePresenter(this, getBookById);
+    }
+
+}
+
+
