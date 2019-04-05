@@ -23,6 +23,9 @@ import android.widget.Toast;
 import audiolibros.example.com.audiolibros.fragments.DetalleFragment;
 import audiolibros.example.com.audiolibros.fragments.SelectorFragment;
 import audiolibros.example.com.audiolibros.presenter.MainPresenter;
+import audiolibros.example.com.audiolibros.usescase.GetLastBook;
+import audiolibros.example.com.audiolibros.usescase.SaveLastBook;
+import audiolibros.example.com.audiolibros.usescase.ValidExistLasBook;
 
 public class MainActivity extends AppCompatActivity implements MainPresenter.View, NavigationView.OnNavigationItemSelectedListener {
 
@@ -44,7 +47,14 @@ public class MainActivity extends AppCompatActivity implements MainPresenter.Vie
 
         adaptador = LibrosSingleton.getInstance(this).getAdaptador();
         //controller = new DELETE__MainController(LibroSharedPreferenceStorage.getInstance(this));
-        presenter = new MainPresenter(LibroSharedPreferenceStorage.getInstance(this), this);
+
+        LibroStorage libroStorage = LibroSharedPreferenceStorage.getInstance(this);
+        SaveLastBook saveLastBook = new SaveLastBook(new BooksRespository(libroStorage));
+        GetLastBook getLastBook = new GetLastBook(new BooksRespository(libroStorage));
+        ValidExistLasBook validExistLasBook = new ValidExistLasBook(new BooksRespository(libroStorage));
+
+        presenter = new MainPresenter(saveLastBook, getLastBook, validExistLasBook, this);
+
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override

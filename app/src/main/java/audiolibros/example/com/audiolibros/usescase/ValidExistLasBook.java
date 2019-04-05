@@ -1,5 +1,6 @@
 package audiolibros.example.com.audiolibros.usescase;
 
+import audiolibros.example.com.audiolibros.BooksRespository;
 import audiolibros.example.com.audiolibros.LibroStorage;
 
 /**
@@ -7,13 +8,13 @@ import audiolibros.example.com.audiolibros.LibroStorage;
  */
 public class ValidExistLasBook {
 
-    private final LibroStorage librosStorage;
+    private final BooksRespository booksRespository;
 
-    public ValidExistLasBook(LibroStorage librosStorage) {
-        this.librosStorage = librosStorage;
+    public ValidExistLasBook(BooksRespository booksRespository) {
+        this.booksRespository = booksRespository;
     }
     public boolean execute() {
-        return librosStorage.hasLastBook();
+        return booksRespository.hasLastBook();
     }
 
 }

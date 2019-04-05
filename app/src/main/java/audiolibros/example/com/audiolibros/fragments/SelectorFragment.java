@@ -49,7 +49,7 @@ public class SelectorFragment extends Fragment implements Animator.AnimatorListe
     public void onAttach(Activity actividad) {
         super.onAttach(actividad);
         this.actividad = actividad;
-        adaptador = LibrosSingleton.getInstance(getContext()).getAdaptador();
+        adaptador = LibrosSingleton.getInstance(actividad).getAdaptador();
     }
 
     @Override
@@ -94,7 +94,7 @@ public class SelectorFragment extends Fragment implements Animator.AnimatorListe
 
                             @Override
                             public void onAnimationEnd(Animator animation) {
-                                Libro libro = LibrosSingleton.getInstance(getContext()).getLibroById(id);
+                                Libro libro = LibrosSingleton.getInstance(getActivity()).getLibroById(id);
                                 if (libro != Libro.LIBRO_EMPTY) {
                                     Intent i = new Intent(Intent.ACTION_SEND);
                                     i.setType("text/plain");
